@@ -1,3 +1,5 @@
+# github.com/gorilla/mux v1.8.0
+github.com/gorilla/mux
 # github.com/rs/zerolog v1.22.0
 github.com/rs/zerolog
 github.com/rs/zerolog/internal/cbor
