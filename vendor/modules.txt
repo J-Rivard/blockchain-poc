@@ -1,0 +1,4 @@
+# github.com/rs/zerolog v1.22.0
+github.com/rs/zerolog
+github.com/rs/zerolog/internal/cbor
+github.com/rs/zerolog/internal/json
