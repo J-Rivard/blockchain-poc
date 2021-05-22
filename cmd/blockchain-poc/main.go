@@ -17,6 +17,13 @@ func main() {
 		panic(err)
 	}
 
+	if len(os.Args) < 3 {
+		logger.LogFatal(logging.FormattedLog{
+			"action": "startup",
+			"error":  "Requires endpoint and peer endpoint argument",
+		})
+	}
+
 	gossipAPI, err := api.New()
 	if err != nil {
 		logger.LogFatal(logging.FormattedLog{
@@ -25,7 +32,7 @@ func main() {
 		})
 	}
 
-	svc, err := service.New(&gossipAPI)
+	svc, err := service.New(&gossipAPI, os.Args[1], os.Args[2])
 	if err != nil {
 		logger.LogFatal(logging.FormattedLog{
 			"action": "startup",

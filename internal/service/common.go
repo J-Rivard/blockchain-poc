@@ -7,12 +7,19 @@ type IGossipAPI interface {
 	Gossip(w http.ResponseWriter, r *http.Request)
 }
 
+type Endpoint string
+
 type Service struct {
 	gossipAPI IGossipAPI
+	host      Endpoint
+	peers     []Endpoint
 }
 
-func New(gossipAPI IGossipAPI) (*Service, error) {
+func New(gossipAPI IGossipAPI, host string, initPeer string) (*Service, error) {
 	return &Service{
+		host:  Endpoint(host),
+		peers: []Endpoint{Endpoint(initPeer)},
+
 		gossipAPI: gossipAPI,
 	}, nil
 }
