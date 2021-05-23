@@ -1,6 +1,14 @@
 package api
 
+import "github.com/J-Rivard/blockchain-poc/internal/models"
+
+type IService interface {
+	Gossip(gossip *models.Gossip) error
+	// sendMoney(gossip *models.Gossip) error
+}
+
 type GossipAPI struct {
+	service IService
 }
 
 const (
@@ -8,6 +16,8 @@ const (
 	SendMoneyEndpoint = "/send-money"
 )
 
-func New() (GossipAPI, error) {
-	return GossipAPI{}, nil
+func New(svc IService) (GossipAPI, error) {
+	return GossipAPI{
+		service: svc,
+	}, nil
 }

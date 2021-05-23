@@ -24,7 +24,7 @@ func main() {
 		})
 	}
 
-	gossipAPI, err := api.New()
+	svc, err := service.New(logger, os.Args[1], os.Args[2])
 	if err != nil {
 		logger.LogFatal(logging.FormattedLog{
 			"action": "startup",
@@ -32,7 +32,7 @@ func main() {
 		})
 	}
 
-	svc, err := service.New(&gossipAPI, os.Args[1], os.Args[2])
+	gossipAPI, err := api.New(svc)
 	if err != nil {
 		logger.LogFatal(logging.FormattedLog{
 			"action": "startup",

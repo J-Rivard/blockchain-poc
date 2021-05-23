@@ -1,5 +1,8 @@
 package models
 
+type Endpoint string
+
 type Gossip struct {
-	Message string
+	Message string     `json:message`
+	Peers   []Endpoint `json:peers`
 }

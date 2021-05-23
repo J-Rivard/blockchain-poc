@@ -15,8 +15,16 @@ func (a *GossipAPI) Gossip(w http.ResponseWriter, r *http.Request) {
 	err := decoder.Decode(&gossip)
 	if err != nil {
 		fmt.Println(err)
+		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
-	fmt.Println(gossip)
+	err = a.service.Gossip(&gossip)
+	if err != nil {
+		fmt.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
 }
