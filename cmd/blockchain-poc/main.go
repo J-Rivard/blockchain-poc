@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/J-Rivard/blockchain-poc/internal/api"
+	"github.com/J-Rivard/blockchain-poc/internal/config"
 	"github.com/J-Rivard/blockchain-poc/internal/logging"
 	"github.com/J-Rivard/blockchain-poc/internal/service"
 	"github.com/gorilla/mux"
@@ -17,14 +18,15 @@ func main() {
 		panic(err)
 	}
 
-	if len(os.Args) < 3 {
+	config, err := config.New(logger)
+	if err != nil {
 		logger.LogFatal(logging.FormattedLog{
 			"action": "startup",
-			"error":  "Requires endpoint and peer endpoint argument",
+			"error":  err.Error(),
 		})
 	}
 
-	svc, err := service.New(logger, os.Args[1], os.Args[2])
+	svc, err := service.New(logger, config.Host, config.InitialPeer)
 	if err != nil {
 		logger.LogFatal(logging.FormattedLog{
 			"action": "startup",
@@ -45,7 +47,7 @@ func main() {
 		router.HandleFunc(api.GossipEndpoint, gossipAPI.Gossip).Methods(http.MethodPost)
 		router.HandleFunc(api.SendMoneyEndpoint, gossipAPI.SendMoney).Methods(http.MethodPost)
 
-		err := http.ListenAndServe(":8080", router)
+		err := http.ListenAndServe(":"+config.HostPort, router)
 		if err != nil {
 			logger.LogFatal(logging.FormattedLog{
 				"action": "startup",
@@ -56,7 +58,7 @@ func main() {
 
 	logger.LogApplication(logging.FormattedLog{
 		"action":   "startup",
-		"metadata": "running api on port 8080",
+		"metadata": "running api on port " + config.HostPort,
 	})
 
 	svc.HandleState()

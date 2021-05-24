@@ -12,11 +12,15 @@ type Service struct {
 }
 
 func New(log *logging.Log, host string, initPeer string) (*Service, error) {
+	peers := make(map[models.Endpoint]struct{})
+
+	if initPeer != "" {
+		peers[models.Endpoint(initPeer)] = struct{}{}
+	}
+
 	return &Service{
-		host: models.Endpoint(host),
-		peers: map[models.Endpoint]struct{}{
-			models.Endpoint(initPeer): {},
-		},
-		log: log,
+		host:  models.Endpoint(host),
+		peers: peers,
+		log:   log,
 	}, nil
 }

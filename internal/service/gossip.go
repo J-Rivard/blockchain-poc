@@ -17,6 +17,9 @@ func (s *Service) Gossip(gossip *models.Gossip) error {
 
 func (s *Service) updatePeers(peers []models.Endpoint) {
 	for _, peer := range peers {
+		if string(peer) == string(s.host) {
+			continue
+		}
 		s.peers[peer] = struct{}{}
 	}
 

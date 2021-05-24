@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"net/url"
 	"time"
 
 	"github.com/J-Rivard/blockchain-poc/internal/logging"
@@ -24,28 +25,39 @@ func (s *Service) updateState() {
 	for peer, _ := range s.peers {
 		endpoint := string(peer) + "/gossip"
 
-		data, err := s.createStateModel()
+		err := s.gossipPeers(endpoint)
 		if err != nil {
 			s.log.LogApplication(logging.FormattedLog{
-				"error": err.Error(),
+				"error": err.Error() + ", removing from peer network",
 			})
-			continue
-		}
 
-		resp, err := http.Post(endpoint, "application/json", bytes.NewBuffer(data))
-		if err != nil {
-			s.log.LogApplication(logging.FormattedLog{
-				"error": err.Error(),
-			})
-			continue
+			delete(s.peers, peer)
 		}
-
-		fmt.Println(resp)
 	}
 }
 
+func (s *Service) gossipPeers(endpoint string) error {
+	data, err := s.createStateModel()
+	if err != nil {
+		return err
+	}
+
+	urlEndpoint, err := url.Parse(endpoint)
+	if err != nil {
+		return err
+	}
+
+	resp, err := http.Post(urlEndpoint.String(), "application/json", bytes.NewBuffer(data))
+	if err != nil {
+		return err
+	}
+
+	fmt.Println(resp.StatusCode)
+	return nil
+}
+
 func (s *Service) createStateModel() ([]byte, error) {
-	peerArray := []string{}
+	peerArray := []string{string(s.host)}
 
 	for key, _ := range s.peers {
 		peerArray = append(peerArray, string(key))
