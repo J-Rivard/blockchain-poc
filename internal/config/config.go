@@ -3,6 +3,7 @@ package config
 import (
 	"errors"
 	"fmt"
+	"io/ioutil"
 	"net"
 	"os"
 
@@ -14,6 +15,9 @@ type Config struct {
 
 	Host        string
 	InitialPeer string
+
+	PublicKey  string
+	PrivateKey string
 }
 
 const (
@@ -26,8 +30,17 @@ func New(logger *logging.Log) (*Config, error) {
 		return nil, v
 	}
 
-	host := "http://" + getOutboundIP() + ":" + os.Getenv(hostPort)
+	privateKey, err := readPrivateKey()
+	if err != nil {
+		return nil, err
+	}
 
+	publicKey, err := readPublicKey()
+	if err != nil {
+		return nil, err
+	}
+
+	host := "http://" + getOutboundIP() + ":" + os.Getenv(hostPort)
 	logger.LogApplication(logging.FormattedLog{
 		"host":        host,
 		"initialPeer": os.Getenv(initialPeer),
@@ -37,6 +50,8 @@ func New(logger *logging.Log) (*Config, error) {
 		HostPort:    os.Getenv(hostPort),
 		Host:        host,
 		InitialPeer: os.Getenv(initialPeer),
+		PrivateKey:  privateKey,
+		PublicKey:   publicKey,
 	}, nil
 }
 
@@ -73,4 +88,22 @@ func getOutboundIP() string {
 		}
 	}
 	return ""
+}
+
+func readPrivateKey() (string, error) {
+	dat, err := ioutil.ReadFile("private.pem")
+	if err != nil {
+		return "", err
+	}
+
+	return string(dat), nil
+}
+
+func readPublicKey() (string, error) {
+	dat, err := ioutil.ReadFile("public.pem")
+	if err != nil {
+		return "", err
+	}
+
+	return string(dat), nil
 }

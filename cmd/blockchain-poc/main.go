@@ -26,6 +26,24 @@ func main() {
 		})
 	}
 
+	// publicBlock, _ := pem.Decode([]byte(config.PublicKey))
+	// publicKey, err := x509.ParsePKCS1PublicKey(publicBlock.Bytes)
+
+	// privateBlock, _ := pem.Decode([]byte(config.PrivateKey))
+	// privateKey, err := x509.ParsePKCS1PrivateKey(privateBlock.Bytes)
+
+	// a, err := pki.Sign2(privateKey, "hello")
+	// fmt.Println(a)
+	// b := pki.Verify(publicKey, []byte(a), "hello")
+	// fmt.Println(b)
+
+	// return
+
+	// en := pki.Encrypt("Hello World", config.PrivateKey)
+	// fmt.Println("Encrypted:", en)
+	// de := pki.Decrypt(en, config.PublicKey)
+	// fmt.Println("Decrypted:", de)
+
 	svc, err := service.New(logger, config.Host, config.InitialPeer)
 	if err != nil {
 		logger.LogFatal(logging.FormattedLog{

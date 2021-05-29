@@ -1,3 +1,4 @@
 export.sh
 run*.sh
 copy_to_pi.sh
+*.pem
