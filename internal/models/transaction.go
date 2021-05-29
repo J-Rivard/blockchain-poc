@@ -1,6 +1,10 @@
 package models
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/J-Rivard/blockchain-poc/internal/pki"
+)
 
 type Transaction struct {
 	From   string
@@ -17,7 +21,17 @@ func NewTxn(from, to, privateKey string, amount float64) *Transaction {
 		Amount: amount,
 	}
 
+	txn.Signature = pki.Encrypt(txn.hash(), privateKey)
+
 	return txn
+}
+
+func (t *Transaction) isValidSignature() bool {
+	if t.isGenesisTransaction() {
+		return true
+	}
+
+	return pki.IsValidSignature(t.hash(), t.Signature, t.From)
 }
 
 func (t *Transaction) isGenesisTransaction() bool {
