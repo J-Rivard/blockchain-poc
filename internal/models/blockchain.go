@@ -14,7 +14,12 @@ func (b *BlockChain) Length() int {
 	return len(b.blocks)
 }
 
-func (b *BlockChain) AddToBlockChain(block *Block) {
+func (b *BlockChain) AddToBlockChain(txn *Transaction) {
+	block, err := NewBlock(b.blocks[b.Length()-1], txn)
+	if err != nil {
+		panic(err)
+	}
+
 	b.blocks = append(b.blocks, block)
 }
 
